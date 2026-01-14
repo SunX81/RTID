@@ -1,7 +1,5 @@
 import numpy as np
 import cv2
-import os
-import time
 
 def compress_channel(channel, base_fraction):
     # Perform DFT transform
@@ -26,7 +24,6 @@ def compress_channel(channel, base_fraction):
 
 
 def compress_image_with_adaptive_threshold(bgr_image, base_fraction):
-
     ycrcb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2YCrCb)
 
     # Separate color channels
@@ -42,8 +39,7 @@ def compress_image_with_adaptive_threshold(bgr_image, base_fraction):
     return b_compressed, g_compressed, r_compressed, Y_compressed
 
 
-
-def recompress_diff(imorig, gau_kz, sigma):
+def recompress_diff(imorig, gau_kz):
     minQ = 0.05
     maxQ = 0.7
     stepQ = 0.05
@@ -56,7 +52,8 @@ def recompress_diff(imorig, gau_kz, sigma):
     ycrcb_image = cv2.cvtColor(imorig, cv2.COLOR_BGR2YCrCb)
 
     for ii in np.arange(minQ, maxQ + stepQ, stepQ):
-        b_compressed, g_compressed, r_compressed, Y_compressed = compress_image_with_adaptive_threshold(imorig, round(ii, 2))
+        b_compressed, g_compressed, r_compressed, Y_compressed = compress_image_with_adaptive_threshold(imorig,
+                                                                                                        round(ii, 2))
 
         Y_disp = ycrcb_image[:, :, 0].astype(float)
         b_disp = imorig[:, :, 0].astype(float)
@@ -68,10 +65,10 @@ def recompress_diff(imorig, gau_kz, sigma):
         g_Comparison = np.square(g_disp - g_compressed)
         r_Comparison = np.square(r_disp - r_compressed)
 
-        # Define a Gaussian filter
-        gaussian_kernel = cv2.getGaussianKernel(gau_kz, sigma)  # 1D Gaussian kernel
+        # Define a Gaussian filtering
+        gaussian_kernel = cv2.getGaussianKernel(gau_kz, 0)  # 1D Gaussian kernel
         gaussian_kernel = gaussian_kernel * gaussian_kernel.T  # Make it 2D
-        # Apply the Gaussian filter
+        # Apply the Gaussian filtering
         Y_Comparison = cv2.filter2D(Y_Comparison, -1, gaussian_kernel)
         b_Comparison = cv2.filter2D(b_Comparison, -1, gaussian_kernel)
         g_Comparison = cv2.filter2D(g_Comparison, -1, gaussian_kernel)
@@ -81,7 +78,7 @@ def recompress_diff(imorig, gau_kz, sigma):
             image_max = np.max(image)
             image_min = np.min(image)
             normalized_data = (image - image_min) / (image_max - image_min)
-        
+
             return normalized_data
 
         Y_Comparison = norm_image(Y_Comparison)
@@ -109,17 +106,16 @@ def recompress_diff(imorig, gau_kz, sigma):
     return OutputX, Y_dispImages, b_dispImages, g_dispImages, r_dispImages
 
 
-def process_image_with_mask(impath, ksize, gau_kz, sigma):
+def process_image_with_mask(impath, med_dim, gau_kz, th):
     im = cv2.imread(impath)
 
-    OutputX, Y_dispImages, b_dispImages, g_dispImages, r_dispImages = recompress_diff(im, gau_kz, sigma)
+    OutputX, Y_dispImages, b_dispImages, g_dispImages, r_dispImages = recompress_diff(im, gau_kz)
 
     def scale_image(dispImages):
         image = np.mean(dispImages, axis=0)
         image_max = np.max(image)
         image_min = np.min(image)
         return (image - image_min) * 255 / (image_max - image_min)
-
 
     b_grayImage = scale_image(b_dispImages).astype(np.uint8)
     g_grayImage = scale_image(g_dispImages).astype(np.uint8)
@@ -133,14 +129,14 @@ def process_image_with_mask(impath, ksize, gau_kz, sigma):
     g_grayImage = cv2.resize(g_grayImage, (ori_width, ori_height))
     b_grayImage = cv2.resize(b_grayImage, (ori_width, ori_height))
 
-    # Apply the Median filter
-    Y_grayImage = cv2.medianBlur(Y_grayImage, ksize)
-    b_grayImage = cv2.medianBlur(b_grayImage, ksize)
-    g_grayImage = cv2.medianBlur(g_grayImage, ksize)
-    r_grayImage = cv2.medianBlur(r_grayImage, ksize)
-    
+    # Apply the Median filtering
+    Y_grayImage = cv2.medianBlur(Y_grayImage, med_dim)
+    b_grayImage = cv2.medianBlur(b_grayImage, med_dim)
+    g_grayImage = cv2.medianBlur(g_grayImage, med_dim)
+    r_grayImage = cv2.medianBlur(r_grayImage, med_dim)
+
     # Set the threshold
-    th = 92
+    th = th
     threshold = np.percentile(Y_grayImage, th)
     thresh, Y_gray = cv2.threshold(Y_grayImage, threshold, maxval=255, type=cv2.THRESH_TOZERO)
 
@@ -161,12 +157,12 @@ def process_image_with_mask(impath, ksize, gau_kz, sigma):
     result_image = im.copy()
     result_image[combined == 1] = blurred_image[combined == 1]
 
-    return  result_image
+    return result_image
 
 
-ksize = 19
+med_dim = 19
 gau_kz = 17
-sigma = 0
+th = 92
 
-result_image = process_image_with_mask("img.JPEG", ksize, gau_kz, sigma)
+result_image = process_image_with_mask("img.JPEG", med_dim, gau_kz, th)
 cv2.imwrite("result.png", result_image.astype(np.uint8))
