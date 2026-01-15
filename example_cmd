@@ -1,0 +1,25 @@
+The following are the hyperparameter combinations for each adversarial patch attack for the RTID method reported in the paper, where 'th' corresponds to the adjustable percentile p, 'gau_kz' corresponds to the Gaussian kernel size 2g+1, and 'med_dim' corresponds to the neighborhood dimension m.
+
+val-p6, val-p7, and val-p8 of dataset ImageNet-drive correspond to Targeted Attack (6%, 7%, and 8% of pixels); val-un corresponds to Unargeted Attack.
+
+ImageNet-drive
+ViT
+val-p6 		th = 0.92, med_dim = 17, gau_kz = 21
+val-p7 		th = 0.92, med_dim = 15, gau_kz = 23
+val-p8 		th = 0.92, med_dim = 17, gau_kz = 21
+val-un 		th = 0.92, med_dim = 15, gau_kz = 23
+
+ResNet50
+val-p6 		th = 0.92, med_dim = 13, gau_kz = 23
+val-p7 		th = 0.92, med_dim = 19, gau_kz = 21
+val-p8 		th = 0.92, med_dim = 17, gau_kz = 19
+val-un 		th = 0.92, med_dim = 13, gau_kz = 21
+
+
+COCO-drive（TOG-patch Attack）		
+th = 0.97, med_dim = 13, gau_kz = 19
+
+
+INRIA（T-SEA Attack）		th = 0.97
+YOLOv3		med_dim = 13, gau_kz = 19
+YOLOv8		med_dim = 13, gau_kz = 19
