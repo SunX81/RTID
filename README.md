@@ -8,4 +8,4 @@ Code for "Real-Time and Independent Defense Against Adversarial Patch Attacks in
 [RTID_datasets.zip(code: ad4n)](https://pan.baidu.com/s/1MH9XDU5MYHOWSyV5zIBILA)
 
 
-See [example_cmd.sh](example_cmd.sh) for example of hyperparameters.
+See [example_cmd.sh](example_cmd) for example of hyperparameters.
