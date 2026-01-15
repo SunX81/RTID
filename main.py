@@ -136,7 +136,7 @@ def process_image_with_mask(impath, med_dim, gau_kz, th):
     r_grayImage = cv2.medianBlur(r_grayImage, med_dim)
 
     # Set the threshold
-    th = th
+    th = th * 100
     threshold = np.percentile(Y_grayImage, th)
     thresh, Y_gray = cv2.threshold(Y_grayImage, threshold, maxval=255, type=cv2.THRESH_TOZERO)
 
@@ -162,7 +162,7 @@ def process_image_with_mask(impath, med_dim, gau_kz, th):
 
 med_dim = 19
 gau_kz = 17
-th = 92
+th = 0.92
 
 result_image = process_image_with_mask("img.JPEG", med_dim, gau_kz, th)
 cv2.imwrite("result.png", result_image.astype(np.uint8))
