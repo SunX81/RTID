@@ -1,6 +1,6 @@
 The following are the hyperparameter combinations for each adversarial patch attack for the RTID method reported in the paper, where 'th' corresponds to the adjustable percentile p, 'gau_kz' corresponds to the Gaussian kernel size 2g+1, and 'med_dim' corresponds to the neighborhood dimension m.
 
-val-p6, val-p7, and val-p8 of dataset ImageNet-drive correspond to Targeted Attack (6%, 7%, and 8% of pixels); val-un corresponds to Unargeted Attack.
+val-p6, val-p7, and val-p8 of dataset ImageNet-drive correspond to Targeted Attack (6%, 7%, and 8% of pixels); val-un corresponds to Unargeted Attack; low_frequency corresponds to Low-frequency Patch Attack.
 
 ImageNet-drive
 ViT
