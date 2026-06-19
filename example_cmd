@@ -14,6 +14,7 @@ val-p6 		th = 0.92, med_dim = 13, gau_kz = 23
 val-p7 		th = 0.92, med_dim = 19, gau_kz = 21
 val-p8 		th = 0.92, med_dim = 17, gau_kz = 19
 val-un 		th = 0.92, med_dim = 13, gau_kz = 21
+low_frequency th = 0.92, med_dim = 13, gau_kz = 23
 
 
 COCO-drive（TOG-patch Attack）		
